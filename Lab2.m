@@ -29,7 +29,7 @@ T1_0(1,2) = 0;
 T1_0(2,2) = 0;
 T1_0(3,3) = 0;
 T2_1 = L(2).A(q2)
-T3_2 = L(3).A(q3)
+T3_2 = L(3).A(q3) 
 T4_3 = L(4).A(q4)
 %% MTH From base to TCP
 MTH_TCP_base = simplify(T1_0*T2_1*T3_2*T4_3*PhantomX.tool)
@@ -43,3 +43,61 @@ PhantomX.plot(qt2, 'notiles', 'noname');
 %% Third configuration
 qt3 = deg2rad([85 -45 0 -30]);
 PhantomX.plot(qt3, 'notiles', 'noname');
+
+
+%% Communication with ROS
+rosinit; %Connecting with master node
+%% 
+motorSvcClient = rossvcclient('/dynamixel_workbench/dynamixel_command'); %Creation of client for the service
+motorCommandMsg = rosmessage(motorSvcClient); %Creation of the service message
+%%
+% Just to try 3
+motorCommandMsg.AddrName = "Goal_Position";
+motorCommandMsg.Id = 1;
+motorCommandMsg.Value = 200;
+call(motorSvcClient,motorCommandMsg); % Calling this service we can send values to the joints    
+
+%% Different configurations in Matlab with ROS and Dynamixel
+
+q1 = [deg2rad([0 0 0 0]) 0];
+q2 = [deg2rad([-20 20 -20 20]) 0];
+q3 = [deg2rad([30 -30 30 -30]) 0];
+q4 = [deg2rad([-90 15 -55 17]) 0];
+q5 = [deg2rad([-90 45 -55 45]) 10];
+
+%% With q1
+PhantomX.plot(q1(1:4), 'notiles', 'noname');
+moveRobot(q1)
+%% With q2
+PhantomX.plot(q2(1:4), 'notiles', 'noname');
+moveRobot(q2)
+%% With q3
+PhantomX.plot(q3(1:4), 'notiles', 'noname');
+moveRobot(q3)
+%% With q4
+PhantomX.plot(q4(1:4), 'notiles', 'noname');
+moveRobot(q4)
+%% With q5
+PhantomX.plot(q5(1:4), 'notiles', 'noname');
+moveRobot(q5)
+
+
+%% Shutdown rosnode
+rosshutdown;
+
+
+%Function to move joints and gripper
+function output = moveRobot(q)
+    motorCommandMsg.AddrName = "Goal_Position";
+    for i= 1: length(q)-1 %To move joints
+        disp(i)
+        motorCommandMsg.Id = i;
+        motorCommandMsg.Value = round(mapfun(rad2deg(q(i)),-150,150,0,1023));
+        call(motorSvcClient,motorCommandMsg); 
+    end
+    motorCommandMsg.Id = i+1; % To move gripper
+    motorCommandMsg.Value = q(i);
+    call(motorSvcClient,motorCommandMsg); % Calling this service we can send values to the joints  
+
+end
+
