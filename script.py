@@ -47,7 +47,7 @@ def jointCommand(command, id_num, addr_name, value, time):
     except rospy.ServiceException as exc:
         print(str(exc))
 
-def deg2raw(input_list: list = [0,0,0,0,0], min_deg: int = -180, max_deg: int = 180)->list:
+def deg2raw(input_list: list = [0,0,0,0,0], min_deg: int = -150, max_deg: int = 150)->list:
     out_list = [0,0,0,0,0]
     for i in range(len(input_list)):
         out_list[i] = int( ((input_list[i] - min_deg)*1024)/(max_deg-min_deg) )
@@ -55,7 +55,7 @@ def deg2raw(input_list: list = [0,0,0,0,0], min_deg: int = -180, max_deg: int = 
 
 
 
-def main(goal_position: list = [30,30,30,30,90], home_position: list = [0,0,0,0,0]):
+def main(goal_position: list = [30,45,-30,-60,150], home_position: list = [0,0,0,0,0]):
 
     motors_ids = [6,7,8,9,10]
     goal_position_raw = deg2raw(goal_position)
@@ -66,11 +66,11 @@ def main(goal_position: list = [30,30,30,30,90], home_position: list = [0,0,0,0,
     
     # Goal_Position (0,1023)
     # Torque_Limit (0,1023)
-    #jointCommand('', 1, 'Torque_Limit', 600, 0)
-    #jointCommand('', 2, 'Torque_Limit', 400, 0)
-    #jointCommand('', 3, 'Torque_Limit', 400, 0)
-    #jointCommand('', 4, 'Torque_Limit', 400, 0)
-    #jointCommand('', 5, 'Torque_Limit', 400, 0)
+    jointCommand('', motors_ids[0], 'Torque_Limit', 600, 0)
+    jointCommand('', motors_ids[1], 'Torque_Limit', 400, 0)
+    jointCommand('', motors_ids[2], 'Torque_Limit', 400, 0)
+    jointCommand('', motors_ids[3], 'Torque_Limit', 400, 0)
+    jointCommand('', motors_ids[4], 'Torque_Limit', 400, 0)
 
     while(True):
         key = getkey()
