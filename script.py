@@ -55,7 +55,9 @@ def deg2raw(input_list: list = [0,0,0,0,0], min_deg: int = -180, max_deg: int = 
 
 
 
-def main(goal_position: list = [30,30,30,30,30], home_position: list = [0,0,0,0,0]):
+def main(goal_position: list = [30,30,30,30,90], home_position: list = [0,0,0,0,0]):
+
+    motors_ids = [6,7,8,9,10]
     goal_position_raw = deg2raw(goal_position)
     home_position_raw = deg2raw(home_position)
     selected_link = "waist"
@@ -84,10 +86,10 @@ def main(goal_position: list = [30,30,30,30,30], home_position: list = [0,0,0,0,
                 print("link: ",selected_link)
             elif(key == "d"):
                 print("movement to goal ...")
-                #jointCommand('', 1, 'Goal_Position', goal_position_raw(1), 0.5)
+                jointCommand('', motors_ids[0], 'Goal_Position', goal_position_raw[0], 0.5)
             elif(key == "a"):
                 print("movement to home ...")
-                #jointCommand('', 1, 'Goal_Position', home_position_raw(1), 0.5)
+                jointCommand('', motors_ids[0], 'Goal_Position', home_position_raw[0], 0.5)
                 
         elif(selected_link == "shoulder"):
             if(key == "w"):
@@ -100,10 +102,10 @@ def main(goal_position: list = [30,30,30,30,30], home_position: list = [0,0,0,0,
                 print("link: ",selected_link)
             elif(key == "d"):
                 print("movement to goal ...")
-                #jointCommand('', 2, 'Goal_Position', goal_position_raw(2), 0.5)
+                jointCommand('', motors_ids[1], 'Goal_Position', goal_position_raw[1], 0.5)
             elif(key == "a"):
                 print("movement to home ...")
-                #jointCommand('', 2, 'Goal_Position', home_position_raw(2), 0.5)
+                jointCommand('', motors_ids[1], 'Goal_Position', home_position_raw[1], 0.5)
 
         elif(selected_link == "elbow"):
             if(key == "w"):
@@ -116,10 +118,10 @@ def main(goal_position: list = [30,30,30,30,30], home_position: list = [0,0,0,0,
                 print("link: ",selected_link)
             elif(key == "d"):
                 print("movement to goal ...")
-                #jointCommand('', 3, 'Goal_Position', goal_position_raw(2), 0.5)
+                jointCommand('', motors_ids[2], 'Goal_Position', goal_position_raw[2], 0.5)
             elif(key == "a"):
                 print("movement to home ...")
-                #jointCommand('', 3, 'Goal_Position', home_position_raw(2), 0.5)
+                jointCommand('', motors_ids[2], 'Goal_Position', home_position_raw[2], 0.5)
 
         elif(selected_link == "wrist"):
             if(key == "w"):
@@ -132,10 +134,10 @@ def main(goal_position: list = [30,30,30,30,30], home_position: list = [0,0,0,0,
                 print("link: ",selected_link)
             elif(key == "d"):
                 print("movement to goal ...")
-                #jointCommand('', 4, 'Goal_Position', goal_position_raw(2), 0.5)
+                jointCommand('', motors_ids[3], 'Goal_Position', goal_position_raw[3], 0.5)
             elif(key == "a"):
                 print("movement to home ...")
-                #jointCommand('', 4, 'Goal_Position', home_position_raw(2), 0.5)
+                jointCommand('', motors_ids[3], 'Goal_Position', home_position_raw[3], 0.5)
 
 
         elif(selected_link == "gripper"):
@@ -149,10 +151,10 @@ def main(goal_position: list = [30,30,30,30,30], home_position: list = [0,0,0,0,
                 print("link: ",selected_link)
             elif(key == "d"):
                 print("movement to goal ...")
-                #jointCommand('', 5, 'Goal_Position', goal_position_raw(2), 0.5)
+                jointCommand('', motors_ids[4], 'Goal_Position', goal_position_raw[4], 0.5)
             elif(key == "a"):
                 print("movement to home ...")
-                #jointCommand('', 5, 'Goal_Position', home_position_raw(2), 0.5)
+                jointCommand('', motors_ids[4], 'Goal_Position', home_position_raw[4], 0.5)
 
                 
 
