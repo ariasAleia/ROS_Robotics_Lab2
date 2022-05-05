@@ -47,15 +47,7 @@ PhantomX.plot(qt3, 'notiles', 'noname');
 
 %% Communication with ROS
 rosinit; %Connecting with master node
-%% 
-motorSvcClient = rossvcclient('/dynamixel_workbench/dynamixel_command'); %Creation of client for the service
-motorCommandMsg = rosmessage(motorSvcClient); %Creation of the service message
-%%
-% Just to try 3
-motorCommandMsg.AddrName = "Goal_Position";
-motorCommandMsg.Id = 10;
-motorCommandMsg.Value = 0;
-call(motorSvcClient,motorCommandMsg); % Calling this service we can send values to the joints    
+
 
 %% Different configurations in Matlab with ROS and Dynamixel
 
