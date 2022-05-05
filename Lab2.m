@@ -2,7 +2,7 @@
 clear
 clc
 l = [14.5, 10.7, 10.7, 9]; % Length of links
-
+%l = [14.5, 10.63, 10.65, 89.7];
 L(1) = Link('revolute','alpha',pi/2,'a',0,   'd',l(1),'offset',0,   'qlim',[-3*pi/4 3*pi/4]);
 L(2) = Link('revolute','alpha',0,   'a',l(2),'d',0,   'offset',pi/2,'qlim',[-3*pi/4 3*pi/4]);
 L(3) = Link('revolute','alpha',0,   'a',l(3),'d',0,   'offset',0,   'qlim',[-3*pi/4 3*pi/4]);
@@ -53,17 +53,17 @@ motorCommandMsg = rosmessage(motorSvcClient); %Creation of the service message
 %%
 % Just to try 3
 motorCommandMsg.AddrName = "Goal_Position";
-motorCommandMsg.Id = 1;
-motorCommandMsg.Value = 200;
+motorCommandMsg.Id = 10;
+motorCommandMsg.Value = 0;
 call(motorSvcClient,motorCommandMsg); % Calling this service we can send values to the joints    
 
 %% Different configurations in Matlab with ROS and Dynamixel
 
-q1 = [deg2rad([0 0 0 0]) 0];
+q1 = [deg2rad([90 0 0 0]) 0];
 q2 = [deg2rad([-20 20 -20 20]) 0];
 q3 = [deg2rad([30 -30 30 -30]) 0];
 q4 = [deg2rad([-90 15 -55 17]) 0];
-q5 = [deg2rad([-90 45 -55 45]) 10];
+q5 = [deg2rad([-90 45 -55 45]) 0];
 
 %% With q1
 PhantomX.plot(q1(1:4), 'notiles', 'noname');
@@ -81,23 +81,48 @@ moveRobot(q4)
 PhantomX.plot(q5(1:4), 'notiles', 'noname');
 moveRobot(q5)
 
+%% Topic subscription
+
+jointSub = rossubscriber('/dynamixel_workbench/joint_states', 'DataFormat','struct'); % We create the subscriptor
+[msgSub,status,statustext] = receive(jointSub,10); % We receive the message
+
+disp("Angle in radians for each joint:")
+disp(" ")
+
+for i = 1:5
+    disp("Joint" + i + ": " + msgSub.Position(i))
+end
 
 %% Shutdown rosnode
 rosshutdown;
-
+%%
 
 %Function to move joints and gripper
 function output = moveRobot(q)
+    offsetID = 0;
+    motorSvcClient = rossvcclient('/dynamixel_workbench/dynamixel_command'); %Creation of client for the service
+    motorCommandMsg = rosmessage(motorSvcClient); %Creation of the service message
+    
+
+    %Torque adjustment
+    motorCommandMsg.AddrName = "Torque_Limit";
+    torque = [600, 400, 400, 400, 400];
+    for i= 1: length(q) 
+        motorCommandMsg.Id = i+offsetID;
+        motorCommandMsg.Value = torque(i);
+        call(motorSvcClient,motorCommandMsg);
+    end
+
+    %Movement of joints    
     motorCommandMsg.AddrName = "Goal_Position";
-    for i= 1: length(q)-1 %To move joints
+    for i= 1: length(q) %To move joints
         disp(i)
-        motorCommandMsg.Id = i;
+        motorCommandMsg.Id = i+offsetID;
+        disp(round(mapfun(rad2deg(q(i)),-150,150,0,1023)))
         motorCommandMsg.Value = round(mapfun(rad2deg(q(i)),-150,150,0,1023));
         call(motorSvcClient,motorCommandMsg); 
+        pause(1);
     end
-    motorCommandMsg.Id = i+1; % To move gripper
-    motorCommandMsg.Value = q(i);
-    call(motorSvcClient,motorCommandMsg); % Calling this service we can send values to the joints  
-
+    
 end
 
