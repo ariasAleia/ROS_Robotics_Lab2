@@ -206,7 +206,7 @@ LINK DEL VIDEO MATLAB
 
 ## Phantom X in Python
 
-
+https://www.youtube.com/watch?v=thgsJ-mzMTc
 ## Conclusions
 
 There are multiple ways in which we can communicate using ROS. We can do it by subscribing or publishing to topics or by calling services. In the same way, there are different ways that can help us to achieve the same behaviour. We can use for example Python or Matlab. Our task is to determine which one of them works better for the goal that we have in mind.  
