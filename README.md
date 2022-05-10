@@ -200,7 +200,7 @@ Then we called the function *moveRobot* and plotted the same configuration in Ma
 PhantomX.plot(q1(1:4), 'notiles', 'noname');
 moveRobot(q1)
 ``` 
-And just in case you don't believe that it actually works, then... watch this video and see it for yourself :D
+And just in case you don't believe that it actually works, then... watch this video and see it for yourself :D. [Video: Phantom X with Matlab and ROS](https://www.youtube.com/watch?v=pTf6VG7GkH4).
 
 LINK DEL VIDEO MATLAB
 
