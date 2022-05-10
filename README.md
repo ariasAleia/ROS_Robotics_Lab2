@@ -147,7 +147,7 @@ To do that we will need to call a service called *dynamixel_command*. This servi
 * *Id*: Each joint has a corresponing ID
 * *Value*: The value that will be sent to the Addr.Name selected
 
-
+Due to that we needed to call the same service to change the values of each joint we created a function called *moveRobot* to do it. This function receives the configuration *q* for all the joints. Below you can find the code. In the first part, we create the client of the service and the service message. After this, we send different values of torque followed by different values of position to each joint.
 
 ```Matlab
 %Function to move joints and gripper
@@ -179,6 +179,10 @@ function output = moveRobot(q)
     
 end
 ```
+When sending the values of position, we had to remap them. In Dynamixel we have values between 0 and 1023 which correspond to -150 degrees and 150 degrees, respectively. 
+
+Having the function the only thing that was missing was to call it and see if it worked. We did it with different configurations as shown below.
+
 
 ``` Matlab
 %% Different configurations in Matlab with ROS and Dynamixel
@@ -189,6 +193,8 @@ q3 = [deg2rad([30 -30 30 -30]) 0];
 q4 = [deg2rad([-90 15 -55 17]) 0];
 q5 = [deg2rad([-90 45 -55 45]) 0];
 ```
+Then we called the function *moveRobot* and plotted the same configuration in Matlab using our previously created Serial Link PhantomX. And guess what?... it worked! :D
+
 ``` Matlab
 %% With q1
 PhantomX.plot(q1(1:4), 'notiles', 'noname');
@@ -197,3 +203,10 @@ moveRobot(q1)
 And just in case you don't believe that it actually works, then... watch this video and see it for yourself :D
 
 LINK DEL VIDEO MATLAB
+
+## Phantom X in Python
+
+
+## Conclusions
+
+There are multiple ways in which we can communicate using ROS. We can do it by subscribing or publishing to topics or by calling services. In the same way, there are different ways that can help us to achieve the same behaviour. We can use for example Python or Matlab. Our task is to determine which one of them works better for the goal that we have in mind.  
