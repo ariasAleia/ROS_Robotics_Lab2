@@ -15,7 +15,13 @@ import termios, sys, os
 
 TERMIOS = termios
 
-def getkey(): #Captura la letra que ingresa del teclado
+
+def getkey(): 
+
+    """
+    Get the last pressed key
+    """
+
     fd = sys.stdin.fileno()
     old = termios.tcgetattr(fd)
     new = termios.tcgetattr(fd)
@@ -32,12 +38,13 @@ def getkey(): #Captura la letra que ingresa del teclado
     return c
 
 
-
-
-
-
 def jointCommand(command, id_num, addr_name, value, time):
-    #rospy.init_node('joint_node', anonymous=False)
+    
+    """
+    Make a request to a the "dynamixel_command" ros service to modify a  
+    parameter such as position or torque of the motor specified by the "id_num" 
+    parameter.
+    """
     rospy.wait_for_service('dynamixel_workbench/dynamixel_command')
     try:        
         dynamixel_command = rospy.ServiceProxy('/dynamixel_workbench/dynamixel_command', DynamixelCommand)
@@ -48,6 +55,9 @@ def jointCommand(command, id_num, addr_name, value, time):
         print(str(exc))
 
 def deg2raw(input_list: list = [0,0,0,0,0], min_deg: int = -150, max_deg: int = 150)->list:
+    """
+    Map a list of motor positions in degrees to a 10 bit values from 0 to 1023. 
+    """
     out_list = [0,0,0,0,0]
     for i in range(len(input_list)):
         out_list[i] = int( ((input_list[i] - min_deg)*1024)/(max_deg-min_deg) )
@@ -56,23 +66,27 @@ def deg2raw(input_list: list = [0,0,0,0,0], min_deg: int = -150, max_deg: int = 
 
 
 def main(goal_position: list = [30,45,-30,-60,150], home_position: list = [0,0,0,0,0]):
-
+    
     motors_ids = [6,7,8,9,10]
+
     goal_position_raw = deg2raw(goal_position)
     home_position_raw = deg2raw(home_position)
-    selected_link = "waist"
-    print("--------------------------------")
-    print("link: ",selected_link)
-    
-    # Goal_Position (0,1023)
-    # Torque_Limit (0,1023)
+
+    # Torque joints config
     jointCommand('', motors_ids[0], 'Torque_Limit', 600, 0)
     jointCommand('', motors_ids[1], 'Torque_Limit', 400, 0)
     jointCommand('', motors_ids[2], 'Torque_Limit', 400, 0)
     jointCommand('', motors_ids[3], 'Torque_Limit', 400, 0)
     jointCommand('', motors_ids[4], 'Torque_Limit', 400, 0)
 
+    # Initial state
+    selected_link = "waist"
+    print("--------------------------------")
+    print("link: ",selected_link)
+
+    # State machine
     while(True):
+        # Key pressed event
         key = getkey()
         
         if(selected_link == "waist"):
@@ -156,39 +170,9 @@ def main(goal_position: list = [30,45,-30,-60,150], home_position: list = [0,0,0
                 print("movement to home ...")
                 jointCommand('', motors_ids[4], 'Goal_Position', home_position_raw[4], 0.5)
 
-                
-
-
-
-def main2():
-
-
-    # Goal_Position (0,1023)
-    # Torque_Limit (0,1023)
-    jointCommand('', 1, 'Torque_Limit', 600, 0)
-    jointCommand('', 2, 'Torque_Limit', 400, 0)
-    jointCommand('', 3, 'Torque_Limit', 400, 0)
-    jointCommand('', 4, 'Torque_Limit', 400, 0)
-    jointCommand('', 4, 'Goal_Position', 512, 0.5)
-    jointCommand('', 3, 'Goal_Position', 512, 0.5)
-    time.sleep(0.5)
-    jointCommand('', 2, 'Goal_Position', 512, 0.5)
-    time.sleep(0.5)
-    jointCommand('', 1, 'Goal_Position', 512, 0.5)
-    jointCommand('', 4, 'Goal_Position', 300, 1)
-    time.sleep(0.2)
-    jointCommand('', 2, 'Goal_Position', 600, 1)
-    time.sleep(0.5)
-    jointCommand('', 3, 'Goal_Position', 300, 0.5)
-    jointCommand('', 1, 'Goal_Position', 512, 0.5)
-
-
-
 
 if __name__ == '__main__':
     try:
         main()
-
-        
     except rospy.ROSInterruptException:
         pass
