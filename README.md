@@ -1,6 +1,6 @@
 # Lab 2 Robotics: Forward Kinematics with Phantom X
 
-This repository contains both MATLAB and python scripts to interact with the Phantom X robot in order to its position. This is done by changing the configuration space of each one of its joints through the communication with different services and topics in ROS.
+This repository contains both MATLAB and python scripts to interact with the Phantom X robot in order to change its position. This is done by changing the configuration space of each one of its joints through the communication with different services and topics in ROS.
 
 ## Authors
 
